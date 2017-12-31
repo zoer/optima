@@ -1,0 +1,14 @@
+language: go
+go:
+  - 1.9
+  - tip
+addons:
+  postgresql: 9.5
+before_script:
+  - psql -c "CREATE USER common WITH PASSWORD 'example'" -U postgres
+  - psql -c 'create database optima_test' -U postgres
+  - psql -c 'GRANT ALL PRIVILEGES ON DATABASE "optima_test" to common' -U postgres
+  - make install
+  - make migrate PG_PORT=5432 PG_HOST=localhost DB=optima_test
+script:
+  - make test PG_PORT=5432

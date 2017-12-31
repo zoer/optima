@@ -1,0 +1,23 @@
+version: '3'
+services:
+  gate:
+    build: ./gate
+    environment:
+      HTTP_PORT: 8089
+      PG_USER: common
+      PG_PASSWORD: example
+      PG_HOST: db
+      PG_PORT: 5432
+      PG_DATABASE: optima
+    depends_on:
+      - db
+    ports:
+      - "8089:8089"
+  db:
+    image: postgres:10.1-alpine
+    environment:
+      POSTGRES_DB: optima
+      POSTGRES_USER: common
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5732:5432"
