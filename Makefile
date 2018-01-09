@@ -1,6 +1,6 @@
 DB ?= optima
 DB_TEST = $(DB)_test
-PG_HOST ?= $(shell docker-machine ip default)
+PG_HOST ?= $(shell docker-machine ip default 2> /dev/null || echo '127.0.0.1')
 PG_PORT ?= 5732
 PG_USER ?= common
 PG_PASSWORD ?= example
@@ -24,19 +24,20 @@ migration:
 
 install:
 	go get github.com/pressly/goose/cmd/goose
-	go get github.com/golang/dep/cmd/dep
-	dep ensure
+	#go get github.com/golang/dep/cmd/dep
+	#dep ensure
 build:
 	cd gate; CGO_ENABLED=0 GOOS=linux  go build -a -installsuffix cgo -ldflags '-w'
 	$(DOCKER_COMPOSE) build
 start_db:
 	$(DOCKER_COMPOSE) up -d db
 	@echo "Waiting PostgreSQL to start..."
-	@while ! nc -z $(PG_HOST) $(PG_PORT) &>/dev/null; do \
+	@while ! nc -z $(PG_HOST) $(PG_PORT); do \
 		sleep 0.2; \
 	done
 	@echo "PostgreSQL started"
 start_web:
+	$(DOCKER_COMPOSE) build gate
 	$(DOCKER_COMPOSE) up -d gate
 start: start_db start_web
 attach:
