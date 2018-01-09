@@ -52,7 +52,7 @@ test:
 	PG_PORT=$(PG_PORT) \
 	PG_USER=$(PG_USER) \
 	PG_PASSWORD=$(PG_PASSWORD) \
-	go test -v -parallel 4 ./...
+	go test -v -parallel 4 -cover ./...
 
 create_testdb:
 	$(call run_sql,DROP DATABASE IF EXISTS $(DB))
